@@ -12,7 +12,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/*
+/**
  * Multivector.java
  *
  * Created on October 10, 2005, 7:37 PM
@@ -42,6 +42,7 @@ import java.util.*;
  * @author  fontijne
  */
 public class Multivector implements Cloneable, InnerProductTypes {
+    
     public static void main(String[] args) {
 	// setup conformal algebra:
 	String[] bvNames = {"no", "e1", "e2", "e3", "ni"};
@@ -236,7 +237,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
-     * umbenannt createBasisVector-->createBasisVector
+     * Create a basis vector.
      * 
      * @param idx 
      * @return basis vector 'idx' range [0 ... dim)
@@ -245,9 +246,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
 	return new Multivector(new ScaledBasisBlade(1 << idx));
     }
     /**
-     * Create basis vector.
+     * Create a scaled basis vector.
      * 
-     * neu
      * @param idx
      * @param s
      * @return basis vector 'idx' range [0 ... dim)
@@ -287,6 +287,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
+     * Get random versor.
+     * 
      * @param dim
      * @param grade
      * @param scale
@@ -313,6 +315,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
+     * Geometric product with a scalar.
+     * 
      * @param a 
      * @return geometric product of this with a scalar
      */
@@ -484,7 +488,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param x 
      * @return scalar product of this with a 'x'
      */
-    public double scalarProduct(Multivector x) {
+    public double scp(Multivector x) {
 	return ip(x, LEFT_CONTRACTION).scalarPart();
     }
 
@@ -506,18 +510,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param M
      * @return scalar product of this with a 'x' using metric 'M'
      */
-    public double scalarProduct(Multivector x, Metric M) {
+    public double scp(Multivector x, Metric M) {
 	return ip(x, M, LEFT_CONTRACTION).scalarPart();
-    }
-
-    /** 
-     * shortcut to scalarProduct(...).
-     * 
-     * @param x
-     * @return  
-     */
-    public double scp(Multivector x) {
-	return scalarProduct(x);
     }
 
     /** 
@@ -529,17 +523,6 @@ public class Multivector implements Cloneable, InnerProductTypes {
      */
     public double scp(Multivector x, double[] m) {
 	return scalarProduct(x, m);
-    }
-
-    /** 
-     * shortcut to scalarProduct(...).
-     * 
-     * @param x
-     * @param M
-     * @return  
-     */
-    public double scp(Multivector x, Metric M) {
-	return scalarProduct(x, M);
     }
 
     /**
@@ -698,7 +681,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @return sin of this under metric 'm' 
      */
     public Multivector sin(double[] m) {
-		return sin(m, 12);
+	return sin(m, 12);
     }
 
     protected Multivector sin(Object M, int order) {
@@ -1419,5 +1402,4 @@ public class Multivector implements Cloneable, InnerProductTypes {
 
     /** when true, the gblades have been sorted on bitmap */
     protected boolean bladesSorted = false;
-
 } 
