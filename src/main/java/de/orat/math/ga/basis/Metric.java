@@ -12,16 +12,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/*
+/**
  * Metric.java
  *
  * Created on February 1, 2005, 12:20 PM
  *
  * Copyright 2005-2007 Daniel Fontijne, University of Amsterdam
  * fontijne@science.uva.nl
- *
  */
-
 package de.orat.math.ga.basis;
 
 import java.util.ArrayList;

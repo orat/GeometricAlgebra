@@ -12,20 +12,19 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/*
+/**
  * MeetJoin.java
  *
  * Created on October 12, 2005, 2:10 PM
  *
  * Copyright 2005-2007 Daniel Fontijne, University of Amsterdam
  * fontijne@science.uva.nl
- *
  */
-
 package de.orat.math.ga.basis;
 
 /**
  * Computes the meet and join.
+ * 
  * Usage:
  * new MeetJoin(a, b).getMeet();
  * Or:
@@ -36,9 +35,9 @@ package de.orat.math.ga.basis;
  * @author  fontijne
  */
 public final class MeetJoin implements InnerProductTypes {
+    
     protected Multivector m_meet;
     protected Multivector m_join;
-
 
     public static void main(String args[]) {
 		// test code for meet / join
@@ -113,27 +112,28 @@ public final class MeetJoin implements InnerProductTypes {
     }
 
     public Multivector getMeet() {
-		return m_meet;
+	return m_meet;
     }
     public Multivector meet() {
-		return m_meet;
+	return m_meet;
     }
 
     public Multivector getJoin() {
-		return m_join;
+	return m_join;
     }
     public Multivector join() {
-		return m_join;
+	return m_join;
     }
 
     /**
-     * @param a *  @return the delta product of 'a' and 'b'
+     * @param a
      * @param b
-     * @return  */
+     * @return the delta product of 'a' and 'b'
+     */
     public static Multivector deltaProduct(Multivector a, Multivector b) {
-		Multivector D = a.gp(b);
-		D = D.compress();
-		return D.extractGrade(D.topGradeIndex());
+        Multivector D = a.gp(b);
+        D = D.compress();
+        return D.extractGrade(D.topGradeIndex());
     }
 
     /**
