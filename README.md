@@ -9,7 +9,7 @@ The colt library can be got here:
 
 http://dsd.lbl.gov/~hoschek/colt/
 
-If you Netbeans IDE:
+If you use the Netbeans IDE:
 
 1. Expand Dependencies.
 2. Right-click on library api-1.2.0.jar (the name of the predefined dependency to the colt lib in the pom.xml file)
