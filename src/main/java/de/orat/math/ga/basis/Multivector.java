@@ -936,7 +936,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     * @param G
     * @return a new multivector of grade(s) 'G'
     */
-    private List<ScaledBasisBlade> extractBlades(int[] G) {
+    public List<ScaledBasisBlade> extractBlades(int[] G) {
         // what is the maximum grade to be extracted?
         int maxG = 0;
         for (int i = 0; i < G.length; i++)
@@ -1395,7 +1395,6 @@ public class Multivector implements Cloneable, InnerProductTypes {
             return versorInverse((double[])M);
         }
     }
-    
     
     /** list of basis gblades */
     protected List<ScaledBasisBlade> blades = null;
