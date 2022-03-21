@@ -434,7 +434,7 @@ public class Util implements InnerProductTypes {
         for (int i = 0; i < k; i++) {
                 Multivector source = Rall.gp(f[i], M).gp(Rall.versorInverse(M), M).gp(((i&1) == 0) ? 1.0 : -1.0);
                 Multivector target = V.gp(f[i], M).gp(Vi, M).gp(VapplyMul);
-                R[i] = source.subtract(target);
+                R[i] = source.sub(target);
                 //System.out.println("R" + i + " = " + R[i].toString(bvNames) + ";");
                 Rall = R[i].gp(Rall, M);
         }

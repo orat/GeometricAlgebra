@@ -156,7 +156,7 @@ public final class MultivectorType {
 	    return;
 	}
 	// check if Agi Avi == Avi Agi
-	if (!Agi._gp(Avi, metric).subtract(Avi._gp(Agi, metric)).compress(epsilon).isNull()) {
+	if (!Agi._gp(Avi, metric).sub(Avi._gp(Agi, metric)).compress(epsilon).isNull()) {
 	    // multivector = multivector, case closed
 	    type = MULTIVECTOR;
 	    return;

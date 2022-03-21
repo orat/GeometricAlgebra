@@ -72,8 +72,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
 	/*
 	Multivector a = e1.add(e2.op(e3));
 	Multivector ai1 = a.generalInverse(M);
-	Multivector T1 = ai1.gp(a, M).subtract(1.0).compress(1e-7);
-	Multivector T2 = a.gp(ai1, M).subtract(1.0).compress(1e-7);
+	Multivector T1 = ai1.gp(a, M).sub(1.0).compress(1e-7);
+	Multivector T2 = a.gp(ai1, M).sub(1.0).compress(1e-7);
 	if (!T1.isNull()) {
 	    System.out.println("More Wha 1 !!!");
 	}
@@ -100,10 +100,10 @@ public class Multivector implements Cloneable, InnerProductTypes {
 		System.out.println("Wha!!!");
 	    }
 	    if (ai1 != null) {
-		Multivector T1 = ai1.gp(a, M).subtract(1.0).compress(1e-7);
-		Multivector T2 = a.gp(ai1, M).subtract(1.0).compress(1e-7);
+		Multivector T1 = ai1.gp(a, M).sub(1.0).compress(1e-7);
+		Multivector T2 = a.gp(ai1, M).sub(1.0).compress(1e-7);
 		if (!T1.isNull()) {
-		    Multivector X = a.gp(ai1, M).subtract(1.0).compress(1e-7);
+		    Multivector X = a.gp(ai1, M).sub(1.0).compress(1e-7);
 		    System.out.println("More Wha 1 !!!");
 		}
 		if (!T2.isNull()) {
@@ -191,7 +191,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     @Override
     public boolean equals(Object O) {
         if (O instanceof Multivector B) {
-            Multivector zero = subtract(B);
+            Multivector zero = Multivector.this.sub(B);
             return (zero.blades.isEmpty());
         } else {
             return false;
@@ -340,10 +340,10 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /**
      * Geometric product.
      * 
-     * @param x 
-     * @return  geometric product of this with a 'x'
+     * @param x multivector
+     * @return  geometric product of this with a 'x' without using the metric.
      */
-    public Multivector gp(Multivector x) {
+    protected Multivector gp(Multivector x) {
         List<ScaledBasisBlade> result = new ArrayList(blades.size() * x.blades.size());
 
         // loop over basis blade of 'this'
@@ -362,8 +362,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /**
      * Geometric product.
      * 
-     * @param x 
-     * @param M
+     * @param x multivector
+     * @param M metric
      * @return  geometric product of this with a 'x' using metric 'M'
      */
     public Multivector gp(Multivector x, Metric M) {
@@ -385,7 +385,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m 
      * @return geometric product of this with a 'x' using metric 'm' 
      */
-    public Multivector gp(Multivector x, double[] m) {
+    protected Multivector gp(Multivector x, double[] m) {
         ArrayList result = new ArrayList(blades.size() * x.blades.size());
         for (int i = 0; i < blades.size(); i++) {
             ScaledBasisBlade B1 = blades.get(i);
@@ -403,7 +403,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param x 
      * @return outer product of this with 'x' 
      */
-    public Multivector op(Multivector x) {
+    protected Multivector op(Multivector x) {
         ArrayList result = new ArrayList(blades.size() * x.blades.size());
         for (int i = 0; i < blades.size(); i++) {
             ScaledBasisBlade B1 = blades.get(i);
@@ -426,7 +426,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * MODIFIED_HESTENES_INNER_PRODUCT.
      * @return inner product of this with a 'x'
      */
-    public Multivector ip(Multivector x, int type) {
+    protected Multivector ip(Multivector x, int type) {
         ArrayList<ScaledBasisBlade> result = new ArrayList(blades.size() * x.blades.size());
         for (int i = 0; i < blades.size(); i++) {
             ScaledBasisBlade B1 = blades.get(i);
@@ -474,7 +474,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * MODIFIED_HESTENES_INNER_PRODUCT.
      * @return inner product of this with a 'x' using metric 'm'
      */
-    public Multivector ip(Multivector x, double[] m, int type) {
+    protected Multivector ip(Multivector x, double[] m, int type) {
         List<ScaledBasisBlade> result = new ArrayList(blades.size() * x.blades.size());
         for (int i = 0; i < blades.size(); i++) {
             ScaledBasisBlade B1 = blades.get(i);
@@ -490,9 +490,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * Scalar product.
      * 
      * @param x 
-     * @return scalar product of this with a 'x'
+     * @return scalar product of this with a 'x' but without respecting a metric.
      */
-    public double scp(Multivector x) {
+    protected double scp(Multivector x) {
 	return ip(x, LEFT_CONTRACTION).scalarPart();
     }
 
@@ -503,15 +503,15 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m
      * @return scalar product of this with a 'x' using metric 'm'
      */
-    public double scalarProduct(Multivector x, double[] m) {
+    /*public double scalarProduct(Multivector x, double[] m) {
 	return ip(x, m, LEFT_CONTRACTION).scalarPart();
-    }
+    }*/
 
     /**
      * Scalar product.
      * 
      * @param x
-     * @param M
+     * @param M metric
      * @return scalar product of this with a 'x' using metric 'M'
      */
     public double scp(Multivector x, Metric M) {
@@ -525,8 +525,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m
      * @return  
      */
-    public double scp(Multivector x, double[] m) {
-	return scalarProduct(x, m);
+    protected double scp(Multivector x, double[] m) {
+        return ip(x, m, LEFT_CONTRACTION).scalarPart();
+	//return scalarProduct(x, m);
     }
 
     /**
@@ -561,7 +562,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param a 
      * @return turn this - scalar 'a' 
      */
-    public Multivector subtract(double a) {
+    public Multivector sub(double a) {
 	return add(-a);
     }
 
@@ -571,7 +572,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param x 
      * @return this - 'x' 
      */
-    public Multivector subtract(Multivector x) {
+    public Multivector sub(Multivector x) {
         List<ScaledBasisBlade> result = new ArrayList(blades.size() + x.blades.size());
         result.addAll(blades);
         result.addAll(x.gp(-1.0).blades);
@@ -582,7 +583,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /** 
      * @return exponential of this 
      */
-    public Multivector exp() {
+    protected Multivector exp() {
 	return exp(null, 12);
     }
     /**
@@ -596,7 +597,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m *  
      * @return exponential of this under metric 'm'
      */
-    public Multivector exp(double[] m) {
+    protected Multivector exp(double[] m) {
 	return exp(m, 12);
     }
     /** 
@@ -670,7 +671,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /** 
      * @return sin of this 
      */
-    public Multivector sin() {
+    protected Multivector sin() {
 	return sin(null, 12);
     }
     /**
@@ -684,7 +685,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m 
      * @return sin of this under metric 'm' 
      */
-    public Multivector sin(double[] m) {
+    protected Multivector sin(double[] m) {
 	return sin(m, 12);
     }
 
@@ -735,7 +736,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /** 
      * @return cos of this 
      */
-    public Multivector cos() {
+    protected Multivector cos() {
         return cos(null, 12);
     }
     /**
@@ -749,7 +750,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m 
      * @return cos of this under metric 'm'
      */
-    public Multivector cos(double[] m) {
+    protected Multivector cos(double[] m) {
 	return cos(m, 12);
     }
 
@@ -798,6 +799,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
+     * Unit under euclidian norm.
+     * 
      * @return unit under Euclidean norm
      * @throws java.lang.ArithmeticException if multivector is null.
      */
@@ -818,10 +821,12 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
+     * Unit under reverse norm.
+     * 
      * @throws java.lang.ArithmeticException if multivector is null
      * @return unit under 'reverse' norm (this / sqrt(abs(this.reverse(this))))
      */
-    public Multivector unit_r() {
+    protected Multivector unit_r() {
         double s = scp(reverse());
         if (s == 0.0) throw new java.lang.ArithmeticException("null multivector");
         else return this.gp(1 / Math.sqrt(Math.abs(s)));
@@ -832,15 +837,17 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m
      * @return unit under 'reverse' norm (this / sqrt(abs(this.reverse(this))))
      */
-    public Multivector unit_r(double[] m) {
+    /*public Multivector unit_r(double[] m) {
         double s = scp(reverse(), m);
         if (s == 0.0) throw new java.lang.ArithmeticException("null multivector");
         else return this.gp(1 / Math.sqrt(Math.abs(s)));
-    }
+    }*/
 
     /**
+     * Unit under reverse norm.
+     * 
      * @throws java.lang.ArithmeticException if multivector is null
-     * @param M
+     * @param M metric
      * @return unit under 'reverse' norm (this / sqrt(abs(this.reverse(this))))
      */
     public Multivector unit_r(Metric M) {
@@ -970,7 +977,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param dim
      * @return dual multivector
      */
-    public Multivector dual(int dim) {
+    protected Multivector dual(int dim) {
         Multivector I = new Multivector(new ScaledBasisBlade((1 << dim)-1, 1.0));
         return ip(I.versorInverse(), LEFT_CONTRACTION);
     }
@@ -992,7 +999,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m
      * @return dual multivector
      */
-    public Multivector dual(double[] m) {
+    protected Multivector dual(double[] m) {
         Multivector I = new Multivector(new ScaledBasisBlade((1 << m.length)-1, 1.0));
         return ip(I.versorInverse(), m, LEFT_CONTRACTION);
     }
@@ -1000,7 +1007,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /** 
      * Get the scalar part of the multivector. 
      * 
-     * @return scalar part of 'this 
+     * @return scalar part of 'this'
      */
     public double scalarPart() {
         double s = 0.0;
@@ -1014,9 +1021,10 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /**
      * Can throw java.lang.ArithmeticException if versor is not invertible.
      * 
-     * @return inverse of this (assuming it is a versor, no check is made!)
+     * @return inverse of this (assuming it is a versor, not metric is used to 
+     * check for invertability, no check to be a versor is made!)
      */
-    public Multivector versorInverse() {
+    protected Multivector versorInverse() {
         Multivector R = reverse();
         double s = scp(R);
         if (s == 0.0) throw new java.lang.ArithmeticException("non-invertible multivector");
@@ -1042,7 +1050,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param m
      * @return inverse of this (assuming it is a versor, no check is made!)
      */
-    public Multivector versorInverse(double[] m) {
+    protected Multivector versorInverse(double[] m) {
         Multivector R = reverse();
         double s = scp(R, m);
         if (s == 0.0) throw new java.lang.ArithmeticException("non-invertible multivector");

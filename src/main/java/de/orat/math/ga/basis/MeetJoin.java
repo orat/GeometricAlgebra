@@ -265,7 +265,7 @@ public final class MeetJoin implements InnerProductTypes {
             Multivector cp, cr; // c projected, c rejected
             Multivector tmpc = c.ip(ca, LEFT_CONTRACTION);
             cp = tmpc.ip(cai, LEFT_CONTRACTION); // use correct inverse because otherwise cr != c - cp
-            cr = c.subtract(cp);
+            cr = c.sub(cp);
 
             // if 'c' has enough of it in 'ca', then add to meet
             if (cp.largestCoordinate() > largeEpsilon) {

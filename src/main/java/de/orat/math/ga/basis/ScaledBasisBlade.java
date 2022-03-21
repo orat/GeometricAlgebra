@@ -13,7 +13,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
-/*
+/**
  * ScaledBasisBlade.java
  *
  * Created on February 1, 2005, 11:41 AM
