@@ -138,7 +138,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
 
 
     /** 
-     * Creates a new instance of Multivector 
+     * Creates a new instance of Multivector.
      */
     public Multivector() {
 	blades = new ArrayList();
@@ -154,15 +154,19 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /** 
+     * Creates a new instance of Multivector.
+     * 
      * do not modify 'B' for it is not copied.
      * 
-     * @param B 
+     * @param B list of scaled blades
      */
     public Multivector(List<ScaledBasisBlade> B) {
 	blades = B;
     }
 
     /** 
+     * Creates a new instance of Multivector.
+     * 
      * do not modify 'B' for it is not copied.
      * 
      * @param B 
@@ -1272,8 +1276,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
 	return compress(1e-13);
     }
     
-    List<ScaledBasisBlade> getBlades() {
-        return /*(ArrayList)*/ /*(List<BasisBlade>) gblades.clone()*/ new ArrayList<>(blades);
+    public List<ScaledBasisBlade> getBlades() {
+        return new ArrayList<>(blades);
     }
    
     /** sorts by bitmap only */
