@@ -48,14 +48,15 @@ public class Metric implements de.orat.math.ga.metric.Metric {
 
         try {
             Metric M = new Metric(m);
-        } catch (MetricException E) {
-        }
-
+        } catch (MetricException E) {}
     }
 
-    /** Creates a new instance of Metric
+    /** 
+     * Creates a new instance of Metric.
+     * 
      * @param m
-     * @throws de.orat.math.ga.impl.metric.MetricException */
+     * @throws de.orat.math.ga.metric.MetricException 
+     */
     public Metric(double[][] m) throws MetricException {
         this(DoubleFactory2D.dense.make(m));
     }
@@ -64,7 +65,7 @@ public class Metric implements de.orat.math.ga.metric.Metric {
      * Creates a new instance of Metric.
      * 
      * @param m
-     * @throws de.orat.math.ga.impl.metric.MetricException 
+     * @throws de.orat.math.ga.metric.MetricException 
      */
     public Metric(DoubleMatrix2D m) throws MetricException {
         m_matrix = m.copy();
@@ -73,38 +74,38 @@ public class Metric implements de.orat.math.ga.metric.Metric {
 
         // compute eigen value decomposition
         m_eig = new EigenvalueDecomposition(m_matrix);
-
         m_invEigMatrix = Algebra.ZERO.transpose(m_eig.getV());
-
         m_eigenMetric = new double[m_eig.getRealEigenvalues().size()];
         for (int i = 0; i < m_eigenMetric.length; i++)
             m_eigenMetric[i] = m_eig.getRealEigenvalues().get(i);
-
-
-		m_isDiagonal = cern.colt.matrix.linalg.Property.ZERO.isDiagonal(m_matrix);
-		if (!m_isDiagonal) {
-			m_isEuclidean = m_isAntiEuclidean = false;
-		}
-		else {
-			m_isEuclidean = m_isAntiEuclidean = true;
-			for (int i = 0; i < m_matrix.columns(); i++) {
-			if (m_matrix.getQuick(i, i) != 1.0)
-				m_isEuclidean = false;
-			if (m_matrix.getQuick(i, i) != -1.0)
-				m_isAntiEuclidean = false;
-			}
-		}
+        m_isDiagonal = cern.colt.matrix.linalg.Property.ZERO.isDiagonal(m_matrix);
+        if (!m_isDiagonal) {
+            m_isEuclidean = m_isAntiEuclidean = false;
+        } else {
+            m_isEuclidean = m_isAntiEuclidean = true;
+            for (int i = 0; i < m_matrix.columns(); i++) {
+                if (m_matrix.getQuick(i, i) != 1.0)
+                    m_isEuclidean = false;
+                if (m_matrix.getQuick(i, i) != -1.0)
+                    m_isAntiEuclidean = false;
+            }
+        }
     }
 
-    /** transforms a to the eigen basis (a must be on metric basis) */
+    /** 
+     * Transforms a to the eigen basis (a must be on metric basis).
+     * 
+     * @param a scales basis blade
+     * @return  
+     */
     public List<ScaledBasisBlade> toEigenbasis(ScaledBasisBlade a) {
         return transform(a, m_invEigMatrix);
     }
 
     /** 
-     * transforms A to the eigen basis (A must be on metric basis)
+     * Transforms A to the eigen basis (A must be on metric basis).
      * 
-     * @param a
+     * @param a scaled basis blade
      * @return  
      */
     public List<ScaledBasisBlade> toEigenbasis(List<ScaledBasisBlade> a) {
@@ -117,7 +118,7 @@ public class Metric implements de.orat.math.ga.metric.Metric {
     }
 
     /** 
-     * transforms a to the metric basis (A must be on eigenbasis).
+     * Transforms a to the metric basis (A must be on eigenbasis).
      * 
      * @param a
      * @return  
@@ -126,7 +127,8 @@ public class Metric implements de.orat.math.ga.metric.Metric {
         return transform(a, m_eig.getV());
     }
 
-    /** transforms A to the metric basis (a must be on eigenbasis).
+    /** 
+     * transforms A to the metric basis (a must be on eigenbasis).
      * 
      * @param a
      * @return  */
@@ -140,7 +142,7 @@ public class Metric implements de.orat.math.ga.metric.Metric {
     }
 
     /** 
-     * transforms a ScaledBasisBlade to a new basis.
+     * Transforms a ScaledBasisBlade to a new basis.
      * 
      * @param a
      * @param M
@@ -173,36 +175,45 @@ public class Metric implements de.orat.math.ga.metric.Metric {
     }
 
     /** 
-     * returns metric when in 'eigenspace'. Do not modify the array! 
+     * Get Eigen metric.
+     * 
+     * @return metric when in 'eigenspace'.Do not modify the array! 
      */
     public double[] getEigenMetric() {
         return m_eigenMetric;
     }
 
+    @Override
     public double getBasisVectorIp(int idx) {
 		return getBasisVectorIp(idx, idx);
     }
 
+    @Override
     public double getBasisVectorIp(int idx1, int idx2) {
 		return m_matrix.get(idx1, idx2);
     }
 
+    @Override
     public cern.colt.matrix.DoubleMatrix2D getInnerProductMatrix() {
 		return m_matrix;
     }
 
+    @Override
     public cern.colt.matrix.linalg.EigenvalueDecomposition getInnerProductMatrixEigenvalueDecomposition() {
 		return m_eig;
     }
 
+    @Override
     public boolean isAntiEuclidean() {
 		return m_isAntiEuclidean;
     }
 
+    @Override
     public boolean isEuclidean() {
 		return m_isEuclidean;
     }
 
+    @Override
     public boolean isDiagonal() {
 	return m_isDiagonal;
     }

@@ -91,9 +91,9 @@ public class Util implements InnerProductTypes {
                 RaltFast = RaltFast.op(fAltFast[g]);
             }
 
-            B = B.unit_e();
-            R = R.unit_e();
-            RaltFast = RaltFast.unit_e();
+            B = B.unit();
+            R = R.unit();
+            RaltFast = RaltFast.unit();
 
             int k = B.grade();
 
@@ -228,14 +228,14 @@ public class Util implements InnerProductTypes {
                 f[i] = new Multivector(e[i]).ip(Bc, LEFT_CONTRACTION).ip(Bc, LEFT_CONTRACTION); // no inverse required, since Bc is always unit
 
                 // normalize f[i]
-                f[i] = f[i].unit_e();
+                f[i] = f[i].unit();
 
                 // remove f[i] from Bc
                 Bc = f[i].ip(Bc, LEFT_CONTRACTION); // no f[i].versorInverse() required, since f[i] is already unit
         }
 
         // last factor = what is left of the input blade
-        f[k-1] = Bc.unit_e(); // already normalized, but renormalize to remove any FP round-off error
+        f[k-1] = Bc.unit(); // already normalized, but renormalize to remove any FP round-off error
 
         return f;
     }
@@ -276,7 +276,7 @@ public class Util implements InnerProductTypes {
         Multivector F = null;
         for (int i = 0; i < e.length; i++) {
             Multivector e_i = new Multivector(e[i]);
-            f[i] = R2.gp(e_i).gp(R2.versorInverse()).add(e_i).unit_e();
+            f[i] = R2.gp(e_i).gp(R2.versorInverse()).add(e_i).unit();
             if (i  == 0) F = f[i];
             else F = F.op(f[i]);
         }
@@ -338,7 +338,7 @@ public class Util implements InnerProductTypes {
         
         Multivector[] f = new Multivector[k];
         if (k == 1) {
-            f[0] = B.unit_e();
+            f[0] = B.unit();
             return f;
         }
         
@@ -590,6 +590,6 @@ public class Util implements InnerProductTypes {
         Multivector v2 = R1.gp(matrixVectorMultiply(m, new double[]{0.0, 1.0, 0.0}, e1, e2, e3)).
                                     gp(R1.versorInverse());
         Multivector R2 = new Multivector(1.0).add(e2.gp(v2));
-        return R2.gp(R1).unit_e();
+        return R2.gp(R1).unit();
     }
 }

@@ -58,10 +58,11 @@ public class Bits {
 
 
     /** Creates a new instance of Integer */
-    public Bits() {
-    }
+    public Bits() {}
 
     /**
+     * Determines the number of 1 bits.
+     * 
      * @param i
      * @return the number of 1 bits in <code>i</code>
      */

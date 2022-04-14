@@ -66,7 +66,7 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
                 for (int j = 0; j < 32; j++) {
                     ScaledBasisBlade a = new ScaledBasisBlade(i);
                     ScaledBasisBlade b = new ScaledBasisBlade(j);
-                    List<ScaledBasisBlade> R = Util.round(gp(a, b, M), 1.0, 0.0001);
+                    List<ScaledBasisBlade> R = Util.round(ScaledBasisBlade.gp(a, b, M), 1.0, 0.0001);
                 }
             }
             /*
@@ -172,7 +172,7 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
     }
 
     /** 
-     * shortcut to geometricProduct().
+     * shortcut to gp().
      * 
      * @param a
      * @param b
@@ -218,19 +218,22 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
     }
 
     /** 
-     * shortcut to geometricProduct().
+     * GeeometricProduct.
      * 
      * @param a
      * @param b
      * @param m
      * @return 
      */
-    public static ScaledBasisBlade gp(ScaledBasisBlade a, ScaledBasisBlade b, double[] m) {
-	return geometricProduct(a, b, m);
-    }
+    /*public static ScaledBasisBlade gp(ScaledBasisBlade a, ScaledBasisBlade b, double[] m) {
+	return gp(a, b, m);
+    }*/
 
     /**
      * Reverse.
+     * 
+     * A reverse operator is an involution operator, which means that twice application
+     * reproduces the original object.
      * 
      * @return reverse of this basis blade (always a newly constructed blade)
      */
@@ -242,7 +245,9 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
     /**
      * Grade inversion.
      * 
-     * @return grade inversion of this basis blade (always a newly constructed blade)
+     * This is also called "involution" in Dorst2007.
+     * 
+     * @return grade inversion/involution of this basis blade (always a newly constructed blade)
      */
     public ScaledBasisBlade gradeInversion() {
         // multiplier is (-1)^x
@@ -251,6 +256,13 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
 
     /**
      * Clifford_conjugate
+     * 
+     * The conjugate operation is an involution, which means that twice application 
+     * results in the original object.
+     * 
+     * The conjugate is equivalent to the reverse if the blades does not multiplay to -1.
+     * 
+     * The conjugate of a basis blade is its inverse.
      * 
      * @return clifford conjugate of this basis blade (always a newly constructed blade)
      */
@@ -269,7 +281,7 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
      * @param m is an array of doubles giving the metric for each basis vector.
      * @return geometric product
      */
-    public static ScaledBasisBlade geometricProduct(ScaledBasisBlade a, ScaledBasisBlade b, double[] m) {
+    public static ScaledBasisBlade gp(ScaledBasisBlade a, ScaledBasisBlade b, double[] m) {
         // compute the geometric product in Euclidean metric:
         ScaledBasisBlade result = geometricProduct(a, b);
 
@@ -324,7 +336,7 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
      * MODIFIED_HESTENES_INNER_PRODUCT.
      * @return the geometric product of two basis blades
      */
-    public static ScaledBasisBlade innerProduct(ScaledBasisBlade a, ScaledBasisBlade b, int type) {
+    public static ScaledBasisBlade ip(ScaledBasisBlade a, ScaledBasisBlade b, int type) {
 	return innerProductFilter(a.grade(), b.grade(), geometricProduct(a, b), type);
     }
 
@@ -338,22 +350,23 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
      * LEFT_CONTRACTION,RIGHT_CONTRACTION, HESTENES_INNER_PRODUCT or MODIFIED_HESTENES_INNER_PRODUCT.
      * @return 
      */
-    public static ScaledBasisBlade innerProduct(ScaledBasisBlade a, ScaledBasisBlade b, double[] m, int type) {
-	return innerProductFilter(a.grade(), b.grade(), geometricProduct(a, b, m), type);
+    public static ScaledBasisBlade ip(ScaledBasisBlade a, ScaledBasisBlade b, double[] m, int type) {
+	return innerProductFilter(a.grade(), b.grade(), gp(a, b, m), type);
     }
 
     /**
      * Computes the inner product of two basis blades in arbitary non-Euclidean metric.
+     * 
      * @param a
      * @param b
      * @param M is an instance of Metric giving the metric (and precomputed eigen vectors).
      * @param type gives the type of inner product:
      * LEFT_CONTRACTION,RIGHT_CONTRACTION, HESTENES_INNER_PRODUCT or MODIFIED_HESTENES_INNER_PRODUCT.
      * @return an ArrayList, because the result does not have to be a single ScaledBasisBlade anymore . . .
-
- <p>Todo: no need to return an ArrayList here? Result is always a single blade?
+     * 
+     * <p>Todo: no need to return an ArrayList here? Result is always a single blade?
      */
-    public static List<ScaledBasisBlade> innerProduct(ScaledBasisBlade a, ScaledBasisBlade b, Metric M, int type) {
+    public static List<ScaledBasisBlade> ip(ScaledBasisBlade a, ScaledBasisBlade b, Metric M, int type) {
 	return innerProductFilter(a.grade(), b.grade(), geometricProduct(a, b, M), type);
     }
 
@@ -365,9 +378,9 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
      * @param type
      * @return  
      */
-    public static ScaledBasisBlade ip(ScaledBasisBlade a, ScaledBasisBlade b, int type) {
+    /*public static ScaledBasisBlade ip(ScaledBasisBlade a, ScaledBasisBlade b, int type) {
 	return innerProduct(a, b, type);
-    }
+    }*/
 
     /** 
      * shortcut to innerProduct(...).
@@ -378,9 +391,9 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
      * @param type
      * @return  
      */
-    public static ScaledBasisBlade ip(ScaledBasisBlade a, ScaledBasisBlade b, double[] m, int type) {
+    /*public static ScaledBasisBlade ip(ScaledBasisBlade a, ScaledBasisBlade b, double[] m, int type) {
 	return innerProduct(a, b, m, type);
-    }
+    }*/
 
     /** 
      * shortcut to innerProduct(...).
@@ -391,9 +404,9 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
      * @param type
      * @return  
      */
-    public static List<ScaledBasisBlade> ip(ScaledBasisBlade a, ScaledBasisBlade b, Metric M, int type) {
+    /*public static List<ScaledBasisBlade> ip(ScaledBasisBlade a, ScaledBasisBlade b, Metric M, int type) {
 	return innerProduct(a, b, M, type);
-    }
+    }*/
 
     /** 
      * Get grade.

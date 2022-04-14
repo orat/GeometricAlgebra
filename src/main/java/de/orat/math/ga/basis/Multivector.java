@@ -579,22 +579,25 @@ public class Multivector implements Cloneable, InnerProductTypes {
         return new Multivector(simplify(cloneArrayElements(result)));
     }
 
-
     /** 
+     * Exponential.
+     * 
      * @return exponential of this 
      */
     protected Multivector exp() {
 	return exp(null, 12);
     }
     /**
-     * @param M 
+     * Exponential.
+     * 
+     * @param M metric
      * @return exponential of this under metric 'M'
      */
     public Multivector exp(Metric M) {
 	return exp(M, 12);
     }
     /**
-     * @param m *  
+     * @param m meetric
      * @return exponential of this under metric 'm'
      */
     protected Multivector exp(double[] m) {
@@ -663,7 +666,6 @@ public class Multivector implements Cloneable, InnerProductTypes {
             result = result._gp(result, M);
             scale >>>= 1;
         }
-
         return result;
     }
 
@@ -744,7 +746,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @return cos of this under metric 'M'
      */
     public Multivector cos(Metric M) {
-		return cos(M, 12);
+	return cos(M, 12);
     }
     /**
      * @param m 
@@ -776,7 +778,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
-     *  Evaluates cos using series ...(== SLOW & INPRECISE!).
+     * Evaluates cos using series ...(== SLOW & INPRECISE!).
      * 
      * @param M
      * @param order
@@ -799,29 +801,19 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
-     * Unit under euclidian norm.
+     * Unit multivector under euclidian norm.
      * 
      * @return unit under Euclidean norm
      * @throws java.lang.ArithmeticException if multivector is null.
      */
-    public Multivector unit_e() {
+    protected Multivector unit() {
 	return unit_r();
     }
-
-    public double norm_e() {
-        double s = scp(reverse());
-        if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
-        else return Math.sqrt(s);
+    public Multivector unit_e(Metric m) {
+	return unit_r(m);
     }
-
-    public double norm_e2() {
-        double s = scp(reverse());
-        if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
-        return s;
-    }
-
     /**
-     * Unit under reverse norm.
+     * Unit multivector under reverse norm.
      * 
      * @throws java.lang.ArithmeticException if multivector is null
      * @return unit under 'reverse' norm (this / sqrt(abs(this.reverse(this))))
@@ -831,7 +823,6 @@ public class Multivector implements Cloneable, InnerProductTypes {
         if (s == 0.0) throw new java.lang.ArithmeticException("null multivector");
         else return this.gp(1 / Math.sqrt(Math.abs(s)));
     }
-
     /**
      * @throws java.lang.ArithmeticException if multivector is null
      * @param m
@@ -842,11 +833,10 @@ public class Multivector implements Cloneable, InnerProductTypes {
         if (s == 0.0) throw new java.lang.ArithmeticException("null multivector");
         else return this.gp(1 / Math.sqrt(Math.abs(s)));
     }*/
-
     /**
      * Unit under reverse norm.
      * 
-     * @throws java.lang.ArithmeticException if multivector is null
+     * @throws java.lang.ArithmeticException if multivector is null-vector
      * @param M metric
      * @return unit under 'reverse' norm (this / sqrt(abs(this.reverse(this))))
      */
@@ -856,6 +846,27 @@ public class Multivector implements Cloneable, InnerProductTypes {
         else return this.gp(1 / Math.sqrt(Math.abs(s)));
     }
 
+    protected double norm_e() {
+        double s = scp(reverse());
+        if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
+        else return Math.sqrt(s);
+    }
+    public double norm_e(Metric m) {
+        double s = scp(reverse(),m);
+        if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
+        else return Math.sqrt(s);
+    }
+    protected double norm_e2() {
+        double s = scp(reverse());
+        if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
+        return s;
+    }
+    public double norm_e2(Metric m) {
+        double s = scp(reverse(), m);
+        if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
+        return s;
+    }
+    
     /** 
      * @return true if this is really 0.0 
      */
@@ -880,13 +891,14 @@ public class Multivector implements Cloneable, InnerProductTypes {
     public boolean isScalar() {
         if (isNull()) return true;
         else if (blades.size() == 1) {
-                ScaledBasisBlade b = blades.get(0);
-                return (b.bitmap == 0);
-        }
-        else return false;
+            ScaledBasisBlade b = blades.get(0);
+            return (b.bitmap == 0);
+        } else return false;
     }
 
     /** 
+     * Reverse of the multivector.
+     * 
      * @return reverse of this 
      */
     public Multivector reverse() {
@@ -900,9 +912,11 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
-     * Grade inversion of the multivector.
+     * Grade inversion (is called involution in Dorst2007?) of the multivector.
      * 
-     * @return grade inversion of this 
+     * This is also called "involution" in Dorst2007.
+     * 
+     * @return grade inversion/involution of this 
      */
     public Multivector gradeInversion() {
         List<ScaledBasisBlade> result = new ArrayList(blades.size());
@@ -910,9 +924,31 @@ public class Multivector implements Cloneable, InnerProductTypes {
             result.add((blades.get(i)).gradeInversion());
         return new Multivector(result);
     }
+    
+    /**
+     * Determines the grade of the basis blade with the maximum grade.
+     * 
+     * @return grade of the blade with the maximum grade
+     */
+    public int maxgrade(){
+        int result = 0;
+        for (int i = 0; i < blades.size(); i++){
+            int grade = blades.get(i).grade();
+            if (grade > result){
+                result = grade;
+            }
+        }
+        return result;
+    }
 
     /**
      * @return clifford conjugate of this 
+     * 
+     * The conjugate operation is an involution, which means that twice application 
+     * results in the original object.
+     * 
+     * The conjugate is equivalent to the reverse if all blades does not multiplay to -1.
+     * This is not the case for CGA.
      */
     public Multivector cliffordConjugate() {
         List<ScaledBasisBlade> result = new ArrayList(blades.size());
@@ -985,18 +1021,39 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /**
      * Determination of the dual multivector.
      * 
-     * @param M
+     * Keep in mind: Undualize is not the same as dual. It depends on the dimension
+     * if there occures a sign.
+     * 
+     * @param M metric
      * @return dual multivector
      */
     public Multivector dual(Metric M) {
         Multivector I = new Multivector(new ScaledBasisBlade((1 << M.getEigenMetric().length)-1, 1.0));
         return ip(I.versorInverse(), M, LEFT_CONTRACTION);
     }
+    
+    /**
+     * If the multivector is defined in dual representation the undual can be
+     * determind.
+     * 
+     * Keep in mind: Depending on the dimension this can produce a different sign
+     * than the dual()-method.
+     * 
+     * Dorst2007 page 80
+     * 
+     * @param M metric
+     * @return mulitvector in inner product null space representation if the original
+     * multivector is defined in outer product null space representation.
+     */
+    public Multivector undual(Metric M){
+         Multivector I = new Multivector(new ScaledBasisBlade((1 << M.getEigenMetric().length)-1, 1.0));
+        return ip(I, M, LEFT_CONTRACTION);
+    }
 
     /**
      * Determination of the dual multivector.
      * 
-     * @param m
+     * @param m metric
      * @return dual multivector
      */
     protected Multivector dual(double[] m) {
@@ -1019,23 +1076,29 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
-     * Can throw java.lang.ArithmeticException if versor is not invertible.
+     * Inverse of the multivector if it is a versor.
      * 
-     * @return inverse of this (assuming it is a versor, not metric is used to 
+     * @return inverse of this (assuming it is a versor, no metric is used to 
      * check for invertability, no check to be a versor is made!)
+     * @throws java.lang.ArithmeticException if versor is not invertible.
      */
     protected Multivector versorInverse() {
         Multivector R = reverse();
         double s = scp(R);
         if (s == 0.0) throw new java.lang.ArithmeticException("non-invertible multivector");
-        return R.gp(1.0 / s);
+        return R.gp(1d / s);
     }
 
     /**
-     * Can throw java.lang.ArithmeticException if versor is not invertible.
+     * Can throw java.lang.ArithmeticException if the multivector is not invertible.
      * 
-     * @param M
-     * @return inverse of this (assuming it is a versor, no check is made!)
+     * A versor is a multivector that can be expressed as the geometric product 
+     * of a number of non-null 1-vectors. A sum of two versors does not in general
+     * result in a versor!
+     * 
+     * @param M metric
+     * @return inverse of this (assuming, it is a versor, no check is made!)
+     * @throws java.lang.ArithmeticException if the multivector is not invertable
      */
     public Multivector versorInverse(Metric M) {
         Multivector R = reverse();
@@ -1049,6 +1112,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * 
      * @param m
      * @return inverse of this (assuming it is a versor, no check is made!)
+     * @throws java.lang.ArithmeticException if the multivector is not invertable
      */
     protected Multivector versorInverse(double[] m) {
         Multivector R = reverse();

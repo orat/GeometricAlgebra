@@ -40,64 +40,64 @@ public final class MeetJoin implements InnerProductTypes {
     protected Multivector m_join;
 
     public static void main(String args[]) {
-		// test code for meet / join
-		int dim = 7;
+        // test code for meet / join
+        int dim = 7;
 
-		for (int i = 0; i < 1000; i++) {
-			Multivector a = Multivector.getRandomBlade(dim, (int)(0.6 * Math.random() * dim), 1.0);
-			Multivector b = Multivector.getRandomBlade(dim, (int)(0.6 * Math.random() * dim), 1.0);
+        for (int i = 0; i < 1000; i++) {
+            Multivector a = Multivector.getRandomBlade(dim, (int)(0.6 * Math.random() * dim), 1.0);
+            Multivector b = Multivector.getRandomBlade(dim, (int)(0.6 * Math.random() * dim), 1.0);
 
-			if (Math.random() < 0.25) {
-			// make a subspace of b:
-			b = a.op(Multivector.getRandomBlade(dim, (int)(0.5 * Math.random() * dim + 0.99), 1.0));
-			}
+            if (Math.random() < 0.25) {
+                // make a subspace of b:
+                b = a.op(Multivector.getRandomBlade(dim, (int)(0.5 * Math.random() * dim + 0.99), 1.0));
+            }
 
-			if (Math.random() < 0.25) {
-			// use basis elements for 'a'
-			a = new Multivector(new ScaledBasisBlade((int)(Math.random() * ((1 << 7) - 1)), 1.0));
-			}
-			if (Math.random() < 0.25) {
-			// use basis elements for 'b'
-			b = new Multivector(new ScaledBasisBlade((int)(Math.random() * ((1 << 7) - 1)), 1.0));
-			}
+            if (Math.random() < 0.25) {
+                // use basis elements for 'a'
+                a = new Multivector(new ScaledBasisBlade((int)(Math.random() * ((1 << 7) - 1)), 1.0));
+            }
+            if (Math.random() < 0.25) {
+                // use basis elements for 'b'
+                b = new Multivector(new ScaledBasisBlade((int)(Math.random() * ((1 << 7) - 1)), 1.0));
+            }
 
-			if (Math.random() < 0.5) {
-			// swap a & b:
-			Multivector tmp = b;
-			b = a;
-			a = tmp;
-			}
+            if (Math.random() < 0.5) {
+                // swap a & b:
+                Multivector tmp = b;
+                b = a;
+                a = tmp;
+            }
 
-			if (a.isNull(1e-3)) continue;
-			if (b.isNull(1e-3)) continue;
+            if (a.isNull(1e-3)) continue;
+            if (b.isNull(1e-3)) continue;
 
-	//	    System.out.println("a = " + a + ",");
-	//	    System.out.println("b = " + b + ",");
+//	    System.out.println("a = " + a + ",");
+//	    System.out.println("b = " + b + ",");
 
-			MeetJoin MJ = null;
-			try {
-			MJ = new MeetJoin(a, b);
-			} catch (Exception ex) {
-			MJ = new MeetJoin(a, b);
-			}
+            MeetJoin MJ = null;
+            try {
+                MJ = new MeetJoin(a, b);
+            } catch (Exception ex) {
+                MJ = new MeetJoin(a, b);
+            }
 
-			Multivector T;
-			try {
-			if ((T = MJ.getMeet().ip(a, LEFT_CONTRACTION).compress(1e-7)).isNull())
-				throw new java.lang.Exception("Meet is not subspace of 'a'");
-			if ((T = MJ.getMeet().ip(b, LEFT_CONTRACTION).compress(1e-7)).isNull())
-				throw new java.lang.Exception("Meet is not subspace of 'b'");
+            Multivector T;
+            try {
+                if ((T = MJ.getMeet().ip(a, LEFT_CONTRACTION).compress(1e-7)).isNull())
+                        throw new java.lang.Exception("Meet is not subspace of 'a'");
+                if ((T = MJ.getMeet().ip(b, LEFT_CONTRACTION).compress(1e-7)).isNull())
+                        throw new java.lang.Exception("Meet is not subspace of 'b'");
 
-			if ((T = a.ip(MJ.getJoin(), LEFT_CONTRACTION).compress(1e-7)).isNull())
-				throw new java.lang.Exception("'a' is not subspace of join");
-			if ((T = b.ip(MJ.getJoin(), LEFT_CONTRACTION).compress(1e-7)).isNull())
-				throw new java.lang.Exception("'b' is not subspace of join");
-			} catch (Exception ex)  {
-			MJ = new MeetJoin(a, b);
-			}
+                if ((T = a.ip(MJ.getJoin(), LEFT_CONTRACTION).compress(1e-7)).isNull())
+                        throw new java.lang.Exception("'a' is not subspace of join");
+                if ((T = b.ip(MJ.getJoin(), LEFT_CONTRACTION).compress(1e-7)).isNull())
+                        throw new java.lang.Exception("'b' is not subspace of join");
+            } catch (Exception ex)  {
+                MJ = new MeetJoin(a, b);
+            }
 
-			System.out.println("Loop " + i + " ");
-		}
+            System.out.println("Loop " + i + " ");
+        }
 
     }
 
@@ -144,8 +144,9 @@ public final class MeetJoin implements InnerProductTypes {
      * more efficient than computing the join and deriving the
      * meet from that.
      *
-     * @param a
-     * @param b
+     * @param a first multivector
+     * @param b second multivector
+     * @throws java.lang.ArithmeticException if the algorithm is failed
      */
     protected void computeMeetJoin(Multivector a, Multivector b) {
 
@@ -157,8 +158,8 @@ public final class MeetJoin implements InnerProductTypes {
 
         // step one: check for near-zero input
         if ((la < smallEpsilon) || (lb < smallEpsilon)) {
-                m_meet = new Multivector();
-                m_join = new Multivector();
+            m_meet = new Multivector();
+            m_join = new Multivector();
         }
 
         // check grade of input
@@ -198,23 +199,23 @@ public final class MeetJoin implements InnerProductTypes {
         // System.out.println("Delta = " + d + ",");
         // if delta product is scalar, we're done:
         if (gd == 0) {
-                // meet = 1
-                m_meet = ca;
-                // join = computed from meet
-                m_join = ca.op(ca.versorInverse().ip(cb, LEFT_CONTRACTION));
+            // meet = 1
+            m_meet = ca;
+            // join = computed from meet
+            m_join = ca.op(ca.versorInverse().ip(cb, LEFT_CONTRACTION));
 
-                return;
+            return;
         }
 
         // if grade of delta product is equal to ga + gb, we're done, too
         if (gd == ga + gb) {
-                // a and b entirely disjoint
-                // meet = 1
-                m_meet = new Multivector(1.0);
-                // join = computed from meet
-                m_join = ca.op(cb);
+            // a and b entirely disjoint
+            // meet = 1
+            m_meet = new Multivector(1.0);
+            // join = computed from meet
+            m_join = ca.op(cb);
 
-                return;
+            return;
         }
 
         // dimension of space we are working in:
@@ -227,10 +228,10 @@ public final class MeetJoin implements InnerProductTypes {
 
         // check join excessity
         if (Ej == 0) {
-                // join computed
-                m_join = j;
-                // meet = computed from join
-                m_meet = cb.ip(j.versorInverse(), LEFT_CONTRACTION).ip(ca, LEFT_CONTRACTION);
+            // join computed
+            m_join = j;
+            // meet = computed from join
+            m_meet = cb.ip(j.versorInverse(), LEFT_CONTRACTION).ip(ca, LEFT_CONTRACTION);
         }
 
         // init meet
@@ -249,10 +250,10 @@ public final class MeetJoin implements InnerProductTypes {
             Multivector c;
 
             {
-            // project 'tmpc' onto 's' (the dual of the delta product)
-            // project using MHIP because 's' may just be a scalar some times?
-            Multivector tmpc = new Multivector(new ScaledBasisBlade(1 << i, 1.0)).ip(s, MHIP);
-            c = tmpc.ip(s, MHIP); // no need to invert 's' here
+                // project 'tmpc' onto 's' (the dual of the delta product)
+                // project using MHIP because 's' may just be a scalar some times?
+                Multivector tmpc = new Multivector(new ScaledBasisBlade(1 << i, 1.0)).ip(s, MHIP);
+                c = tmpc.ip(s, MHIP); // no need to invert 's' here
             }
 
             // todo: then this naughty step could be avoided:
@@ -272,10 +273,10 @@ public final class MeetJoin implements InnerProductTypes {
                 m = m.op(cp);
                 Em--; // reduce excessity of meet
                 if (Em == 0) { // has the meet been computed???
-                        m_meet = m;
-                        // join = computed from meet
-                        m_join = ca.op(ca.versorInverse().ip(cb, LEFT_CONTRACTION));
-                        return;
+                    m_meet = m;
+                    // join = computed from meet
+                    m_join = ca.op(ca.versorInverse().ip(cb, LEFT_CONTRACTION));
+                    return;
                 }
             }
 
@@ -283,10 +284,10 @@ public final class MeetJoin implements InnerProductTypes {
                 j = cr.ip(j, LEFT_CONTRACTION);
                 Ej--; // reduce excessity of join
                 if (Ej == 0) { // has the join been computed???
-                        m_join = j;
-                        // meet = computed from join
-                        m_meet = cb.ip(j.versorInverse(), LEFT_CONTRACTION).ip(ca, LEFT_CONTRACTION);
-                        return;
+                    m_join = j;
+                    // meet = computed from join
+                    m_meet = cb.ip(j.versorInverse(), LEFT_CONTRACTION).ip(ca, LEFT_CONTRACTION);
+                    return;
                 }
             }
         }
