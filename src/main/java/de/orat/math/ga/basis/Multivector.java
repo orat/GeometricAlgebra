@@ -246,14 +246,14 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param idx 
      * @return basis vector 'idx' range [0 ... dim)
      */
-    public static Multivector createBasisVector(int idx) {
+    protected static Multivector createBasisVector(int idx) {
 	return new Multivector(new ScaledBasisBlade(1 << idx));
     }
     /**
      * Create a scaled basis vector.
      * 
      * @param idx
-     * @param s
+     * @param s scale
      * @return basis vector 'idx' range [0 ... dim)
      */
     public static Multivector createBasisVector(int idx, double s) {
@@ -314,14 +314,14 @@ public class Multivector implements Cloneable, InnerProductTypes {
     public static Multivector getRandomVersor(int dim, int grade, double scale, Object metric) {
         Multivector result = new Multivector(2 * scale * (Math.random() - 0.5));
         for (int i = 1; i <= grade; i++)
-                result = result._gp(getRandomVector(dim, scale), metric);
+                result = result.gp(getRandomVector(dim, scale), metric);
         return result;
     }
 
     /**
      * Geometric product with a scalar.
      * 
-     * @param a 
+     * @param a scalar
      * @return geometric product of this with a scalar
      */
     public Multivector gp(double a) {
@@ -330,8 +330,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
         } else {
             ArrayList result = new ArrayList(blades.size());
             for (int i = 0; i < blades.size(); i++) {
-            ScaledBasisBlade b = blades.get(i);
-            result.add(new ScaledBasisBlade(b.bitmap, b.scale * a));
+                ScaledBasisBlade b = blades.get(i);
+                result.add(new ScaledBasisBlade(b.bitmap, b.scale * a));
             }
             return new Multivector(result);
         }
@@ -519,7 +519,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /** 
-     * shortcut to scalarProduct(...).
+     * Scalar product.
      * 
      * @param x
      * @param m
@@ -597,7 +597,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
 	return exp(M, 12);
     }
     /**
-     * @param m meetric
+     * @param m metric
      * @return exponential of this under metric 'm'
      */
     protected Multivector exp(double[] m) {
@@ -612,7 +612,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      */
     protected Multivector exp(Object M, int order) {
         // check out this^2 for special cases
-        Multivector A2 = this._gp(this, M).compress();
+        Multivector A2 = this.gp(this, M).compress();
         if (A2.isNull(1e-8)) {
             // special case A^2 = 0
             return this.add(1);
@@ -644,8 +644,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
             double max = this.norm_e();
             if (max > 1.0) scale <<= 1;
             while (max > 1.0) {
-                    max = max / 2;
-                    scale <<= 1;
+                max = max / 2;
+                scale <<= 1;
             }
         }
 
@@ -654,16 +654,15 @@ public class Multivector implements Cloneable, InnerProductTypes {
         // taylor approximation
         Multivector result = new Multivector(1.0); {
             Multivector tmp = new Multivector(1.0);
-
             for (int i = 1; i < order; i++) {
-                    tmp = tmp._gp(scaled.gp(1.0 / i), M);
-                    result = result.add(tmp);
+                tmp = tmp.gp(scaled.gp(1.0 / i), M);
+                result = result.add(tmp);
             }
         }
 
         // undo scaling
         while (scale > 1) {
-            result = result._gp(result, M);
+            result = result.gp(result, M);
             scale >>>= 1;
         }
         return result;
@@ -693,7 +692,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
 
     protected Multivector sin(Object M, int order) {
         // check out this^2 for special cases
-        Multivector A2 = this._gp(this, M).compress();
+        Multivector A2 = this.gp(this, M).compress();
         if (A2.isNull(1e-8)) {
             // special case A^2 = 0
             return this;
@@ -726,7 +725,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
         Multivector tmp = scaled;
         int sign = -1;
         for (int i = 2; i < order; i ++) {
-            tmp = tmp._gp(scaled.gp(1.0 / i), M);
+            tmp = tmp.gp(scaled.gp(1.0 / i), M);
             if ((i & 1) != 0) {// only the odd part of the series
                 result = result.add(tmp.gp((double)sign));
                 sign *= -1;
@@ -758,7 +757,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
 
     protected Multivector cos(Object M, int order) {
         // check out this^2 for special cases
-        Multivector A2 = this._gp(this, M).compress();
+        Multivector A2 = this.gp(this, M).compress();
         if (A2.isNull(1e-8)) {
             // special case A^2 = 0
             return new Multivector(1);
@@ -791,7 +790,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
         Multivector tmp = scaled;
         int sign = -1;
         for (int i = 2; i < order; i ++) {
-            tmp = tmp._gp(scaled.gp(1.0 / i), M);
+            tmp = tmp.gp(scaled.gp(1.0 / i), M);
             if ((i & 1) == 0) {// only the even part of the series
                 result = result.add(tmp.gp((double)sign));
                 sign *= -1;
@@ -809,9 +808,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
     protected Multivector unit() {
 	return unit_r();
     }
-    public Multivector unit_e(Metric m) {
+    /*public Multivector unit_e(Metric m) {
 	return unit_r(m);
-    }
+    }*/
     /**
      * Unit multivector under reverse norm.
      * 
@@ -821,7 +820,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     protected Multivector unit_r() {
         double s = scp(reverse());
         if (s == 0.0) throw new java.lang.ArithmeticException("null multivector");
-        else return this.gp(1 / Math.sqrt(Math.abs(s)));
+        else return this.gp(1d / Math.sqrt(Math.abs(s)));
     }
     /**
      * @throws java.lang.ArithmeticException if multivector is null
@@ -836,6 +835,11 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /**
      * Unit under reverse norm.
      * 
+     * nach Kleppe
+     * normalize = {
+     *   _P(1)/(sqrt(abs(_P(1)*_P(1)~)))
+     * }
+     *
      * @throws java.lang.ArithmeticException if multivector is null-vector
      * @param M metric
      * @return unit under 'reverse' norm (this / sqrt(abs(this.reverse(this))))
@@ -851,6 +855,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
         if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
         else return Math.sqrt(s);
     }
+    
     public double norm_e(Metric m) {
         double s = scp(reverse(),m);
         if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
@@ -886,14 +891,19 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /** 
+     * Is it a scalar.
+     * 
      * @return true is this is a scalar (0.0 is also a scalar) 
      */
     public boolean isScalar() {
-        if (isNull()) return true;
-        else if (blades.size() == 1) {
+        if (isNull()) {
+            return true;
+        } else if (blades.size() == 1) {
             ScaledBasisBlade b = blades.get(0);
             return (b.bitmap == 0);
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     /** 
@@ -1024,6 +1034,10 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * Keep in mind: Undualize is not the same as dual. It depends on the dimension
      * if there occures a sign.
      * 
+     * Keep in mind: Depending on the dimension this can produce a different sign
+     * than the dual()-method.
+     * 
+     * Dorst2007 page 80
      * @param M metric
      * @return dual multivector
      */
@@ -1040,6 +1054,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * than the dual()-method.
      * 
      * Dorst2007 page 80
+     * 
+     * FIXME
+     * stimmt das überhaupt?
      * 
      * @param M metric
      * @return mulitvector in inner product null space representation if the original
@@ -1090,11 +1107,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
-     * Can throw java.lang.ArithmeticException if the multivector is not invertible.
-     * 
      * A versor is a multivector that can be expressed as the geometric product 
      * of a number of non-null 1-vectors. A sum of two versors does not in general
-     * result in a versor!
+     * result in a versor!<p>
      * 
      * @param M metric
      * @return inverse of this (assuming, it is a versor, no check is made!)
@@ -1189,6 +1204,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /** 
+     * Simplify the multivector representation.
+     * 
      * @return simplification of this multivector (the same Multivector, 
      * but gblades array can be changed) 
      */
@@ -1379,8 +1396,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
             if (curBlade.scale == 0.0) {
                 I.remove();
                 prevBlade = null;
-            }
-            else if ((prevBlade != null) && (prevBlade.bitmap == curBlade.bitmap)) {
+            } else if ((prevBlade != null) && (prevBlade.bitmap == curBlade.bitmap)) {
                 prevBlade.scale += curBlade.scale;
                 I.remove();
             } else {
@@ -1429,7 +1445,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param M
      * @return  
      */
-    protected Multivector _gp(Multivector x, Object M) {
+    protected Multivector gp(Multivector x, Object M) {
         if (M == null) {
             return gp(x);
         } else if (M instanceof Metric metric) {
@@ -1446,7 +1462,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param M null or double[]
      * @return  
      */
-    protected double _scp(Multivector x, Object M) {
+    protected double scp(Multivector x, Object M) {
         if (M == null) {
             return scp(x);
         } else if (M instanceof Metric metric){

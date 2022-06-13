@@ -357,8 +357,8 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
     /**
      * Computes the inner product of two basis blades in arbitary non-Euclidean metric.
      * 
-     * @param a
-     * @param b
+     * @param a left side blade
+     * @param b right side blade
      * @param M is an instance of Metric giving the metric (and precomputed eigen vectors).
      * @param type gives the type of inner product:
      * LEFT_CONTRACTION,RIGHT_CONTRACTION, HESTENES_INNER_PRODUCT or MODIFIED_HESTENES_INNER_PRODUCT.
@@ -534,8 +534,7 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
         List<ScaledBasisBlade> result = new ArrayList();
         for (int i = 0; i < R.size(); i++) {
             ScaledBasisBlade B = innerProductFilter(ga, gb, (ScaledBasisBlade)R.get(i), type);
-            if (B.scale != 0.0)
-            result.add(B);
+            if (B.scale != 0.0) result.add(B);
         }
         return result;
     }
@@ -553,19 +552,27 @@ final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
     private static ScaledBasisBlade innerProductFilter(int ga, int gb, ScaledBasisBlade r, int type) {
         switch(type) {
             case LEFT_CONTRACTION:
-                if ((ga > gb) || (r.grade() != (gb-ga)))
-                        return new ScaledBasisBlade();
-                else return r;
+                if ((ga > gb) || (r.grade() != (gb-ga))) {
+                    return new ScaledBasisBlade();
+                } else {
+                    return r;
+                }
             case RIGHT_CONTRACTION:
-                if ((ga < gb) || (r.grade() != (ga-gb)))
-                        return new ScaledBasisBlade();
-                else return r;
+                if ((ga < gb) || (r.grade() != (ga-gb))){
+                    return new ScaledBasisBlade();
+                } else {
+                    return r;
+                }
             case HESTENES_INNER_PRODUCT:
                 if ((ga == 0) || (gb == 0)) return new ScaledBasisBlade();
                 // drop through to MODIFIED_HESTENES_INNER_PRODUCT
+            // dot product?
             case MODIFIED_HESTENES_INNER_PRODUCT:
-                if (Math.abs(ga - gb) == r.grade()) return r;
-                else return new ScaledBasisBlade();
+                if (Math.abs(ga - gb) == r.grade()) {
+                    return r;
+                } else {
+                    return new ScaledBasisBlade();
+                }
             default:
                 return null;
         }

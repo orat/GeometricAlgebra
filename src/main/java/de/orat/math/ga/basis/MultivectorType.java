@@ -150,13 +150,13 @@ public final class MultivectorType {
 	Multivector Agi = A.gradeInversion();
 
 	// check if Agi Avi is a scalar:
-	if (Agi._gp(Avi, metric).compress(epsilon).gradeUsage() != 1) {
+	if (Agi.gp(Avi, metric).compress(epsilon).gradeUsage() != 1) {
 	    // multivector = multivector, case closed
 	    type = MULTIVECTOR;
 	    return;
 	}
 	// check if Agi Avi == Avi Agi
-	if (!Agi._gp(Avi, metric).sub(Avi._gp(Agi, metric)).compress(epsilon).isNull()) {
+	if (!Agi.gp(Avi, metric).sub(Avi.gp(Agi, metric)).compress(epsilon).isNull()) {
 	    // multivector = multivector, case closed
 	    type = MULTIVECTOR;
 	    return;
@@ -166,7 +166,7 @@ public final class MultivectorType {
 	int dim = A.spaceDim();
 	for (int i = 0; i < dim; i++) {
 	    Multivector ei = new Multivector(new ScaledBasisBlade(1 << i));
-	    if (Avi._gp(ei, metric)._gp(Agi, metric).compress().gradeUsage() != 2) {
+	    if (Avi.gp(ei, metric).gp(Agi, metric).compress().gradeUsage() != 2) {
 		// multivector = multivector, case closed
 		type = MULTIVECTOR;
 		return;
