@@ -1108,8 +1108,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
 
     /**
      * A versor is a multivector that can be expressed as the geometric product 
-     * of a number of non-null 1-vectors. A sum of two versors does not in general
-     * result in a versor!<p>
+     * of a number of non-null 1-vectors. 
+     * 
+     * A sum of two versors does not in general result in a versor!<p>
      * 
      * @param M metric
      * @return inverse of this (assuming, it is a versor, no check is made!)
