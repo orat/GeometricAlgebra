@@ -97,7 +97,7 @@ public class Util implements InnerProductTypes {
 
             int k = B.grade();
 
-            double checkScale = R.gp(RaltFast.versorInverse()).scalarPart();
+            double checkScale = R.gp(RaltFast._versorInverse()).scalarPart();
             if (checkScale < 0)
                 System.out.println("Whaaaaa!\n");
 
@@ -270,19 +270,19 @@ public class Util implements InnerProductTypes {
             if ((E.bitmap & (1 << g)) != 0)
                 e[idx++] = new ScaledBasisBlade((1 << g), 1.0);
 
-        Multivector R2 = B.gp((new Multivector(E)).versorInverse());
+        Multivector R2 = B.gp((new Multivector(E))._versorInverse());
 
         Multivector[] f = new Multivector[k];
         Multivector F = null;
         for (int i = 0; i < e.length; i++) {
             Multivector e_i = new Multivector(e[i]);
-            f[i] = R2.gp(e_i).gp(R2.versorInverse()).add(e_i).unit();
+            f[i] = R2.gp(e_i).gp(R2._versorInverse()).add(e_i).unit();
             if (i  == 0) F = f[i];
             else F = F.op(f[i]);
         }
 
         if ((scale != null) && (scale.length >= 1))
-            scale[0] = B.scp(F.versorInverse());
+            scale[0] = B.scp(F._versorInverse());
 
         return f;
     }
@@ -509,7 +509,7 @@ public class Util implements InnerProductTypes {
             opF = opF.op(f[i]);
             }
 
-            double s = opF.gp(opFno.versorInverse()).scalarPart();
+            double s = opF.gp(opFno._versorInverse()).scalarPart();
             scale[0] *= s;
         }
 
@@ -588,7 +588,7 @@ public class Util implements InnerProductTypes {
         Multivector R1 = new Multivector(1.0).add(e1.gp(matrixVectorMultiply(m, 
                                  new double[]{1.0, 0.0, 0.0}, e1, e2, e3)));
         Multivector v2 = R1.gp(matrixVectorMultiply(m, new double[]{0.0, 1.0, 0.0}, e1, e2, e3)).
-                                    gp(R1.versorInverse());
+                                    gp(R1._versorInverse());
         Multivector R2 = new Multivector(1.0).add(e2.gp(v2));
         return R2.gp(R1).unit();
     }

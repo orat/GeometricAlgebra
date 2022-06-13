@@ -202,7 +202,7 @@ public final class MeetJoin implements InnerProductTypes {
             // meet = 1
             m_meet = ca;
             // join = computed from meet
-            m_join = ca.op(ca.versorInverse().ip(cb, LEFT_CONTRACTION));
+            m_join = ca.op(ca._versorInverse().ip(cb, LEFT_CONTRACTION));
 
             return;
         }
@@ -231,7 +231,7 @@ public final class MeetJoin implements InnerProductTypes {
             // join computed
             m_join = j;
             // meet = computed from join
-            m_meet = cb.ip(j.versorInverse(), LEFT_CONTRACTION).ip(ca, LEFT_CONTRACTION);
+            m_meet = cb.ip(j._versorInverse(), LEFT_CONTRACTION).ip(ca, LEFT_CONTRACTION);
         }
 
         // init meet
@@ -239,10 +239,10 @@ public final class MeetJoin implements InnerProductTypes {
         int Em = ((ga + gb - gd) >> 1); // compute excessity of meet
 
         // init s, the dual of the delta product:
-        Multivector s = d.ip(I.versorInverse(), LEFT_CONTRACTION);
+        Multivector s = d.ip(I._versorInverse(), LEFT_CONTRACTION);
 
         // precompute inverse of ca
-        Multivector cai = ca.versorInverse();
+        Multivector cai = ca._versorInverse();
 
         // todo: maybe we can improve: search only the largest basis blade of the not-delta product?
         for (int i = 0; i < dim; i++) {
@@ -275,7 +275,7 @@ public final class MeetJoin implements InnerProductTypes {
                 if (Em == 0) { // has the meet been computed???
                     m_meet = m;
                     // join = computed from meet
-                    m_join = ca.op(ca.versorInverse().ip(cb, LEFT_CONTRACTION));
+                    m_join = ca.op(ca._versorInverse().ip(cb, LEFT_CONTRACTION));
                     return;
                 }
             }
@@ -286,7 +286,7 @@ public final class MeetJoin implements InnerProductTypes {
                 if (Ej == 0) { // has the join been computed???
                     m_join = j;
                     // meet = computed from join
-                    m_meet = cb.ip(j.versorInverse(), LEFT_CONTRACTION).ip(ca, LEFT_CONTRACTION);
+                    m_meet = cb.ip(j._versorInverse(), LEFT_CONTRACTION).ip(ca, LEFT_CONTRACTION);
                     return;
                 }
             }

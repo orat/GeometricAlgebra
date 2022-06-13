@@ -1025,7 +1025,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      */
     protected Multivector dual(int dim) {
         Multivector I = new Multivector(new ScaledBasisBlade((1 << dim)-1, 1.0));
-        return ip(I.versorInverse(), LEFT_CONTRACTION);
+        return ip(I._versorInverse(), LEFT_CONTRACTION);
     }
 
     /**
@@ -1043,7 +1043,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      */
     public Multivector dual(Metric M) {
         Multivector I = new Multivector(new ScaledBasisBlade((1 << M.getEigenMetric().length)-1, 1.0));
-        return ip(I.versorInverse(), M, LEFT_CONTRACTION);
+        return ip(I._versorInverse(), M, LEFT_CONTRACTION);
     }
     
     /**
@@ -1075,7 +1075,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      */
     protected Multivector dual(double[] m) {
         Multivector I = new Multivector(new ScaledBasisBlade((1 << m.length)-1, 1.0));
-        return ip(I.versorInverse(), m, LEFT_CONTRACTION);
+        return ip(I._versorInverse(), m, LEFT_CONTRACTION);
     }
 
     /** 
@@ -1099,7 +1099,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * check for invertability, no check to be a versor is made!)
      * @throws java.lang.ArithmeticException if versor is not invertible.
      */
-    protected Multivector versorInverse() {
+    protected Multivector _versorInverse() {
         Multivector R = reverse();
         double s = scp(R);
         if (s == 0.0) throw new java.lang.ArithmeticException("non-invertible multivector");
@@ -1481,7 +1481,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      */
     protected Multivector _versorInverse(Object M) {
         if (M == null) {
-            return versorInverse();
+            return _versorInverse();
         } else if (M instanceof Metric metric) {
             return versorInverse(metric);
         } else {
