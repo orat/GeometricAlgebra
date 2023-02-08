@@ -31,9 +31,8 @@ import java.util.List;
 /**
  * A class for representing totally arbitrary metric. 
  * 
- * Metric is given
- * in the form of a (symmetric) matrix. The eigenvectors of the matrix
- * are computed since these are used for computing (geometric) products
+ * Metric is given in the form of a (symmetric) matrix. The eigenvectors of the 
+ * matrix are computed since these are used for computing (geometric) products
  * in this metric.
  *
  * @author  fontijne

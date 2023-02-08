@@ -36,8 +36,8 @@ public interface InnerProductTypes {
     
     public final static int LEFT_CONTRACTION = 1;
     public final static int RIGHT_CONTRACTION = 2;
-    public final static int HESTENES_INNER_PRODUCT = 3;
-    public final static int MODIFIED_HESTENES_INNER_PRODUCT = 4;
+    public final static int HESTENES_INNER_PRODUCT = 3; // original Hestenes inner product: The scalar parts are set to 0.
+    public final static int MODIFIED_HESTENES_INNER_PRODUCT = 4; // fix odd behavoir for scalars.
 
     public final static int LC = LEFT_CONTRACTION;
     public final static int RC = RIGHT_CONTRACTION;

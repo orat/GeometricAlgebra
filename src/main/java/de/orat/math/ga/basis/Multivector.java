@@ -22,7 +22,7 @@
  *
  * TODO
  * - vielleicht besser in ein api package verschieben
- * - die spaceDim() Methode könnte fehlschlagen, wenn nicht alls BasisBlades in
+ * - die spaceDim() Methode könnte fehlschlagen, wenn nicht als BasisBlades in
  *   in einem Multivektor Werte != 0 haben. 
  *
  */
@@ -214,8 +214,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /**
      * toString.
      * 
-     * @param bvNames The names of the basis vector (e1, e2, e3) are used when
+     * @param bvNames The names of the basis vector (e1, e2, e3) are used if
      * not available
+     * 
      * @return String representation of the multivector
      */
     public String toString(String[] bvNames) {
@@ -472,7 +473,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * RIGHT_CONTRACTION,
      * HESTENES_INNER_PRODUCT or
      * MODIFIED_HESTENES_INNER_PRODUCT.
-     * @return inner product of this with a 'x' using metric 'm'
+     * @return inner product of this with a given 'x' using metric 'm'
      */
     protected Multivector ip(Multivector x, double[] m, int type) {
         List<ScaledBasisBlade> result = new ArrayList(blades.size() * x.blades.size());
@@ -523,11 +524,10 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * 
      * @param x
      * @param m
-     * @return  
+     * @return  scalar product
      */
     protected double scp(Multivector x, double[] m) {
         return ip(x, m, LEFT_CONTRACTION).scalarPart();
-	//return scalarProduct(x, m);
     }
 
     /**
@@ -765,13 +765,12 @@ public class Multivector implements Cloneable, InnerProductTypes {
             double a2 = A2.scalarPart();
             // special case A^2 = +-alpha^2
             if (a2 < 0) {
-                    double alpha = Math.sqrt(-a2);
-                    return new Multivector(MathU.cosh(alpha));
-            }
+                double alpha = Math.sqrt(-a2);
+                return new Multivector(MathU.cosh(alpha));
             //hey: todo what if a2 == 0?
-            else {
-                    double alpha = Math.sqrt(a2);
-                    return new Multivector(Math.cos(alpha));
+            } else {
+                double alpha = Math.sqrt(a2);
+                return new Multivector(Math.cos(alpha));
             }
         } else return cosSeries(M, order);
     }
@@ -922,7 +921,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /**
-     * Grade inversion (is called involution in Dorst2007?) of the multivector.
+     * Grade inversion.
      * 
      * This is also called "involution" in Dorst2007.
      * 
@@ -957,8 +956,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * The conjugate operation is an involution, which means that twice application 
      * results in the original object.
      * 
-     * The conjugate is equivalent to the reverse if all blades does not multiplay to -1.
-     * This is not the case for CGA.
+     * The conjugate is equivalent to the reverse if all blades do not multiplay to -1.
+     * This is not the case for CGA!!!
      */
     public Multivector cliffordConjugate() {
         List<ScaledBasisBlade> result = new ArrayList(blades.size());
@@ -970,7 +969,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /**
      * Extracts grade 'g' from this multivector.
      * 
-     * @param g
+     * @param g grade
      * @return a new multivector of grade 'g'
      */
     public Multivector extractGrade(int g) {
@@ -980,7 +979,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /**
      * Extracts grade(s) 'G' from this multivector.
      * 
-     * @param G
+     * @param G array of grades
      * @return a new multivector of grade(s) 'G'
      */
     public Multivector extractGrade(int[] G) {
@@ -990,7 +989,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
    /**
     * Extracts grade(s) 'G' from this multivector.
     * 
-    * @param G
+    * @param G array of grade numbers
     * @return a new multivector of grade(s) 'G'
     */
     public List<ScaledBasisBlade> extractBlades(int[] G) {
@@ -1034,10 +1033,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * Keep in mind: Undualize is not the same as dual. It depends on the dimension
      * if there occures a sign.
      * 
-     * Keep in mind: Depending on the dimension this can produce a different sign
-     * than the dual()-method.
-     * 
      * Dorst2007 page 80
+     * 
      * @param M metric
      * @return dual multivector
      */
@@ -1061,11 +1058,12 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @param M metric
      * @return mulitvector in inner product null space representation if the original
      * multivector is defined in outer product null space representation.
+     * @deprecated 
      */
-    public Multivector undual(Metric M){
-         Multivector I = new Multivector(new ScaledBasisBlade((1 << M.getEigenMetric().length)-1, 1.0));
+    /*public Multivector undual(Metric M){
+        Multivector I = new Multivector(new ScaledBasisBlade((1 << M.getEigenMetric().length)-1, 1.0));
         return ip(I, M, LEFT_CONTRACTION);
-    }
+    }*/
 
     /**
      * Determination of the dual multivector.
@@ -1250,6 +1248,8 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     /** 
+     * Determination of the grade.
+     * 
      * @return the grade of this if homogeneous, -1 otherwise.
      * 0 is return for null Multivectors.
      */
@@ -1363,7 +1363,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @return  
      */
     public Multivector compress() {
-	return compress(1e-13);
+	return compress(3e-11);
     }
     
     public List<ScaledBasisBlade> getBlades() {
