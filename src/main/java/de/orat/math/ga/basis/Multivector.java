@@ -1039,10 +1039,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @return dual multivector
      */
     public Multivector dual(Metric M) {
-        Multivector I = new Multivector(new ScaledBasisBlade((1 << M.getEigenMetric().length)-1, 1.0));
+        Multivector I = createI(M);
         return ip(I._versorInverse(), M, LEFT_CONTRACTION);
     }
-    
     /**
      * If the multivector is defined in dual representation the undual can be
      * determind.
@@ -1052,19 +1051,18 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * 
      * Dorst2007 page 80
      * 
-     * FIXME
-     * stimmt das überhaupt?
-     * 
      * @param M metric
      * @return mulitvector in inner product null space representation if the original
      * multivector is defined in outer product null space representation.
-     * @deprecated 
      */
-    /*public Multivector undual(Metric M){
-        Multivector I = new Multivector(new ScaledBasisBlade((1 << M.getEigenMetric().length)-1, 1.0));
+    public Multivector undual(Metric M){
+        Multivector I = createI(M);
         return ip(I, M, LEFT_CONTRACTION);
-    }*/
-
+    }
+    public Multivector createI(Metric M){
+        return new Multivector(new ScaledBasisBlade((1 << M.getEigenMetric().length)-1, 1.0));
+    }
+    
     /**
      * Determination of the dual multivector.
      * 
@@ -1083,6 +1081,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      */
     public double scalarPart() {
         double s = 0.0;
+        //FXIME why have I to iterate over all blades?
         for (int i = 0; i < blades.size(); i++) {
             ScaledBasisBlade b = blades.get(i);
             if (b.bitmap == 0) s += b.scale;
