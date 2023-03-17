@@ -1362,7 +1362,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @return  
      */
     public Multivector compress() {
-	return compress(3e-11);
+	return compress(3e-9);
     }
     
     public List<ScaledBasisBlade> getBlades() {
