@@ -850,20 +850,19 @@ public class Multivector implements Cloneable, InnerProductTypes {
     }
 
     protected double norm_e() {
-        double s = scp(reverse());
-        if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
-        else return Math.sqrt(s);
-    }
-    
-    public double norm_e(Metric m) {
-        double s = scp(reverse(),m);
-        if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
-        else return Math.sqrt(s);
+        //double s = scp(reverse());
+        //if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
+        /*else */return Math.sqrt(norm_e2());
     }
     protected double norm_e2() {
         double s = scp(reverse());
         if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
         return s;
+    }
+    public double norm_e(Metric m) {
+        //double s = scp(reverse(),m);
+        //if (s < 0.0) return 0.0; // avoid FP round off causing negative 's'
+        /*else */return Math.sqrt(norm_e2(m));
     }
     public double norm_e2(Metric m) {
         double s = scp(reverse(), m);
@@ -871,7 +870,10 @@ public class Multivector implements Cloneable, InnerProductTypes {
         return s;
     }
     
+    
     /** 
+     * Strict test for no blades with values different to 0 are there.
+     * 
      * @return true if this is really 0.0 
      */
     public boolean isNull() {
@@ -892,7 +894,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
     /** 
      * Is it a scalar.
      * 
-     * @return true is this is a scalar (0.0 is also a scalar) 
+     * @return true if this is a scalar (0.0 is also a scalar) 
      */
     public boolean isScalar() {
         if (isNull()) {
@@ -954,7 +956,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @return clifford conjugate of this 
      * 
      * The conjugate operation is an involution, which means that twice application 
-     * results in the original object.
+     * results in the original object.<p>
      * 
      * The conjugate is equivalent to the reverse if all blades do not multiplay to -1.
      * This is not the case for CGA!!!
@@ -1031,9 +1033,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * Determination of the dual multivector.
      * 
      * Keep in mind: Undualize is not the same as dual. It depends on the dimension
-     * if there occures a sign.
+     * if there occures a sign.<p>
      * 
-     * Dorst2007 page 80
+     * Dorst2007 page 80<p>
      * 
      * @param M metric
      * @return dual multivector
@@ -1047,9 +1049,9 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * determind.
      * 
      * Keep in mind: Depending on the dimension this can produce a different sign
-     * than the dual()-method.
+     * than the dual()-method.<p>
      * 
-     * Dorst2007 page 80
+     * Dorst2007 page 80<p>
      * 
      * @param M metric
      * @return mulitvector in inner product null space representation if the original
@@ -1057,6 +1059,11 @@ public class Multivector implements Cloneable, InnerProductTypes {
      */
     public Multivector undual(Metric M){
         Multivector I = createI(M);
+        //FIXME im Gegensatz zu dual() versor_inverse() nicht angewendet. Das scheint
+        // mir aber nicht korrekt zu sein...
+        // das Vorzeichen stimmt bei CGA nicht, hier ist ein Vorzeichen switch
+        // abhängig vom grade einzufügen eine gradeInversion()?
+        //TODO
         return ip(I, M, LEFT_CONTRACTION);
     }
     public Multivector createI(Metric M){
@@ -1070,10 +1077,13 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * @return dual multivector
      */
     protected Multivector dual(double[] m) {
-        Multivector I = new Multivector(new ScaledBasisBlade((1 << m.length)-1, 1.0));
+        Multivector I = createI(m);
         return ip(I._versorInverse(), m, LEFT_CONTRACTION);
     }
-
+    private Multivector createI(double[] m){
+        return new Multivector(new ScaledBasisBlade((1 << m.length)-1, 1.0));
+    }
+    
     /** 
      * Get the scalar part of the multivector. 
      * 
@@ -1173,7 +1183,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
         try {
             IM = cern.colt.matrix.linalg.Algebra.DEFAULT.inverse(M);
         } catch (Exception ex) {
-            throw new java.lang.ArithmeticException("Multivector is not invertible");
+            throw new java.lang.ArithmeticException("Multivector \""+toString()+"\" is not invertible!");
         }
 
         // reconstruct multivector from first column of matrix
@@ -1250,7 +1260,7 @@ public class Multivector implements Cloneable, InnerProductTypes {
      * Determination of the grade.
      * 
      * @return the grade of this if homogeneous, -1 otherwise.
-     * 0 is return for null Multivectors.
+     * 0 is return for null-Multivectors.
      */
     public int grade() {
         int g = -1;

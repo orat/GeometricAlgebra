@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  fontijne
  */
-final public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
+/*final*/ public class ScaledBasisBlade implements Cloneable, InnerProductTypes {
 
     /** 
      * temp for testing.

@@ -145,7 +145,8 @@ public class Metric implements de.orat.math.ga.metric.Metric {
      * 
      * @param a
      * @param M
-     * @return  */
+     * @return  
+      */
     protected List<ScaledBasisBlade> transform(ScaledBasisBlade a, DoubleMatrix2D M) {
         ArrayList A = new ArrayList();
         A.add(new ScaledBasisBlade(a.scale)); // start with just scalar;
